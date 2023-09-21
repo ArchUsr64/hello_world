@@ -1,0 +1,9 @@
+start:
+  mov ah, 0x09
+  mov al, 0x48
+  mov cl, 0x01
+  mov bl, 0x0f
+  mov bh, 0x00
+  int 0x10
+DB 510-($-start) DUP(0)
+DW 0xaa55
