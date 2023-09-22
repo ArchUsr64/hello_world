@@ -6,15 +6,8 @@ enter_scancode EQU 0x1c
 
 start:
 	mov ah, 0x0e
-	mov bx, input_prompt
-
-print_prompt:
-	mov al, [bx]
-	cmp al, 0
-	je echo_mode
-	int 0x10
-	inc bx
-	jmp print_prompt
+	mov si, input_prompt
+	call print_string
 
 echo_mode:
 	mov bx, input_buffer
@@ -32,15 +25,9 @@ echo_loop:
 output:
 	mov ah, 0x0e
 	mov al, line_feed
-	mov bx, output_prompt
 	int 0x10
-print_output:
-	mov al, [bx]
-	cmp al, 0
-	je print_inverted_case
-	int 0x10
-	inc bx
-	jmp print_output
+	mov si, output_prompt
+	call print_string
 
 print_inverted_case:
 	mov bx, input_buffer
@@ -65,6 +52,17 @@ restart:
 end:
 	nop
 	jmp end
+
+print_string:
+	; Expects the pointer to string in si
+	mov al, [si]
+	cmp al, 0
+	je return
+	int 0x10
+	inc si
+	jmp print_string
+return:
+	ret
 
 input_prompt:
 	DB "Enter string: ", 0
